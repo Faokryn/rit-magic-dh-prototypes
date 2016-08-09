@@ -1,0 +1,42 @@
+main {
+    padding: 30px;
+}
+
+#alerts div.alert {
+    display:none;
+}
+
+h1 {
+    color: #FF0000;
+}
+
+.invalid {
+    border-color: #FF0000 !important;
+}
+
+p.invalid {
+    color: #FF0000 !important;
+}
+
+/* Make button group radio buttons appear below their labels */
+#q-cell-phone > label, #permissions > label {
+    display: block;
+}
+
+#q-where > input {
+    display: none;
+}
+
+/* hide file and file meta data inputs */
+.file-group input, .file-group textarea {
+    display: none;
+}
+
+/* hide the displays for files until the file is added */
+#unadded-files > div {
+    display: none;
+}
+
+#added-files {
+    margin-bottom: 12px;
+}

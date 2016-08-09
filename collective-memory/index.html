@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>9/11: Collective Memory</title>
+
+        <!-- Bootstrap -->
+        <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="assets/css/bootstrap-theme.min.css">
+        <!-- Custom Styles -->
+        <link rel="stylesheet" type="text/css" href="assets/css/911.css">
+        <link rel="stylesheet" type="text/css" href="assets/css/map.css">
+        <link rel="stylesheet" type="text/css" href="assets/css/fileUploadGroup.css">
+
+        <!-- Conditional script for Bootstrap with IE 8 -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+
+        <!-- Add File Modal -->
+        <div class="modal fade" id="add-file-modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title">Add a File</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="file-form">
+                            <div class="form-group" id="file">
+                                <label for="file">Choose a file to upload</label>
+                                <p class="help-block">
+                                    Choose and image, audio, or video file
+                                </p>
+                                <p class="help-block" id="file-size-txt">
+                                    Maximum file size: 15 MB
+                                </p>
+                                <div class="input-group file-upload-group">
+                                    <label class="input-group-btn">
+                                        <span class="btn btn-default">
+                                            Browse&hellip;
+                                        </span>
+                                    </label>
+                                    <input type="text" class="form-control" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group" id="title">
+                                <label for="title">Title</label>
+                                <input type="text" class="form-control">
+                            </div>
+                            <div class="form-group" id="description">
+                                <label for="description">Description</label>
+                                <textarea class="form-control" rows="3" placeholder="Enter a short description of the file"></textarea>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-xs-6" id="date">
+                                    <label for="date">Date</label>
+                                    <p class="help-block">
+                                        MM/DD/YYYY
+                                    </p>
+                                    <input class="form-control col-xs-6" type="date" value="2001-09-11">
+                                </div>
+                                <div class="form-group col-xs-6" id="time">
+                                    <label for="time">Time</label>
+                                    <p class="help-block">
+                                        HH:MM AM/PM
+                                    </p>
+                                    <input class="form-control col-xs-6" type="time" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group" id="location">
+                                <label for="location">Location</label>
+                                <!-- TODO: Replace location text input with Google Maps API map and lat/lng inputs -->
+                                <input class="form-control" type="text">
+                            </div>
+                            <div class="form-group" id="permissions">
+                                <label for="permissions">Permissions</label>
+                                <p class="help-block">
+                                    Content marked as <strong>Public</strong> will be viewable to all vistors to the site.
+                                </p>
+                                <p class="help-block">
+                                    Content marked as <strong>Restricted</strong> will only be viewable to selected users (feature in progress).
+                                </p>
+                                <p class="help-block">
+                                    Content marked as <strong>Private</strong> will only be viewable to site administrators and the user who added the content.
+                                </p>
+                                <p class="help-block">
+                                    Note: anonymous submissions marked as <strong>Private</strong> will only be viewable to administrators.
+                                </p>
+                                <div id="permissions" class="btn-group" data-toggle="buttons">
+                                    <label class="btn btn-default active">
+                                        <input type="radio" id="permissions-public" value="public" autocomplete="off" checked>Public
+                                    </label>
+                                    <label class="btn btn-default">
+                                        <input type="radio" id="permissions-restricted" value="restricted" autocomplete="off">Restricted
+                                    </label>
+                                    <label class="btn btn-default">
+                                        <input type="radio" id="permissions-private" value="private" autocomplete="off">Private
+                                    </label>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="add-file-btn" class="btn btn-primary" data-dismiss="modal">Add</button>
+                        <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- / Add File Modal -->
+
+        <!-- Confirm Remove Modal -->
+        <div class="modal fade" id="confirm-modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <h4 class="modal-title">Are you sure you want to remove "<span id="file-name"></span>" and all of its related data?</h4>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button id="confirm-remove" type="button" class="btn btn-danger" data-dismiss="modal">Remove</button>
+                    </div>
+                </div>
+            </div>
+        </div>  <!-- / Confirm Remove Modal -->
+
+        <main class="container">
+
+            <!-- Alerts confirming successful file upload or reporting error while uploading -->
+            <div id="alerts">
+                <div class="alert alert-success alert-dismissible fade in" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    Submission uploaded successfully!
+                </div>
+                <div class="alert alert-danger alert-dismissible fade in" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    A problem occurred while uploading your submission.  Please try again.
+                </div>
+            </div> <!-- / alerts -->
+
+            <h1>PLEASE SHARE YOUR REFLECTIONS &amp; MEMORIES OF 9/11</h1>
+            <hr>
+            <form class="form" method="post" action="submit.php">
+
+                <!-- Questions -->
+                <div id="questions">
+                    <!-- First Moments Question -->
+                    <div class="form-group" id="q-first-moments">
+                        <label for="q-first-moment">Reflecting back on September 11, 2001, describe what you remember about the first moments you learned about the events of the day.</label>
+                        <textarea class="form-control" rows="3" name="q-first-moments" required></textarea>
+                    </div>
+                    <!-- What Changed Question -->
+                    <div class="form-group" id="q-change">
+                        <label for="q-change">How did this change over the hours and days that followed?</label>
+                        <textarea class="form-control" rows="3" name="q-change" required></textarea>
+                    </div>
+                    <!-- Directly Impacted Question -->
+                    <div class="form-group" id="q-impacted">
+                        <label for="q-impacted">Did you know anyone who was directly impacted by the attacks?</label>
+                        <textarea class="form-control" rows="3" name="q-impacted" required></textarea>
+                    </div>
+                    <!-- Where Were You Question -->
+                    <div class="form-group" id="q-where">
+                        <label for="q-where">Where were you when you learned about the attacks?</label>
+                        <p class="help-block">Click and drag the map to pan. Scroll or use the buttons in the lower right corner of the map to zoom.  Click to set marker.</p>
+                        <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+                        <div id="mapContainer">
+                            <div class="embed-responsive embed-responsive-16by9">
+                                <div class="embed-responsive-item" id="map"></div>
+                            </div>
+                        </div>
+                        <input type="number" id="q-where-lat" name="q-where-lat" required>
+                        <input type="number" id="q-where-lng" name="q-where-lng" required>
+                    </div>
+                    <!-- What to Pass On Question -->
+                    <div class="form-group" id="q-pass-on">
+                        <label for="q-pass-on">What would you want present and future members of your
+                        family/community to know about your experience/connection to September 11, 2001?</label>
+                        <textarea class="form-control" rows="3" name="q-pass-on" required></textarea>
+                    </div>
+                    <!-- Cell Phone Question -->
+                    <div class="form-group" id="q-cell-phone">
+                        <label for="q-cell-phone">Did you have a cell phone that day?</label>
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-default active">
+                                <input type="radio" name="q-cell-phone" id="q-cell-phone-radio-yes" value="1" autocomplete="off" checked>Yes
+                            </label>
+                            <label class="btn btn-default">
+                                <input type="radio" name="q-cell-phone" id="q-cell-phone-radio-no" value="0" autocomplete="off">No
+                            </label>
+                        </div>
+                    </div>
+                </div> <!-- / Questions -->
+
+                <!-- Files -->
+                <div id="files">
+                    <!-- TODO: programatically add these based on MAX_FILES in fileCollection.js -->
+                    <!-- File 1 -->
+                    <div id="f1" class="file-group">
+                        <input  type="file" id="f1-file" name="f1-file"
+                                accept="image/*,audio/*,video/*">
+                        <input type="text"  id="f1-title" name="f1-title">
+                        <textarea  id="f1-description" name="f1-description"></textarea>
+                        <input type="date"  id="f1-date" name="f1-date">
+                        <input type="time"  id="f1-time" name="f1-time">
+                        <input type="text"  id="f1-location" name="f1-location">
+                        <input type="text"  id="f1-permissions" name="f1-permissions">
+                    </div>
+                    <!-- File 2 -->
+                    <div id="f2" class="file-group">
+                        <input  type="file" id="f2-file" name="f2-file"
+                                accept="image/*,audio/*,video/*">
+                        <input type="text"  id="f2-title" name="f2-title">
+                        <textarea  id="f2-description" name="f2-description"></textarea>
+                        <input type="date"  id="f2-date" name="f2-date">
+                        <input type="time"  id="f2-time" name="f2-time">
+                        <input type="text"  id="f2-location" name="f2-location">
+                        <input type="text"  id="f2-permissions" name="f2-permissions">
+                    </div>
+                    <!-- File 3 -->
+                    <div id="f3" class="file-group">
+                        <input  type="file" id="f3-file" name="f3-file"
+                                accept="image/*,audio/*,video/*">
+                        <input type="text"  id="f3-title" name="f3-title">
+                        <textarea  id="f3-description" name="f3-description"></textarea>
+                        <input type="date"  id="f3-date" name="f3-date">
+                        <input type="time"  id="f3-time" name="f3-time">
+                        <input type="text"  id="f3-location" name="f3-location">
+                        <input type="text"  id="f3-permissions" name="f3-permissions">
+                    </div>
+                    <!-- File 4 -->
+                    <div id="f4" class="file-group">
+                        <input  type="file" id="f4-file" name="f4-file"
+                                accept="image/*,audio/*,video/*">
+                        <input type="text"  id="f4-title" name="f4-title">
+                        <textarea  id="f4-description" name="f4-description"></textarea>
+                        <input type="date"  id="f4-date" name="f4-date">
+                        <input type="time"  id="f4-time" name="f4-time">
+                        <input type="text"  id="f4-location" name="f4-location">
+                        <input type="text"  id="f4-permissions" name="f4-permissions">
+                    </div>
+                    <!-- File 5 -->
+                    <div id="f5" class="file-group">
+                        <input  type="file" id="f5-file" name="f5-file"
+                                accept="image/*,audio/*,video/*">
+                        <input type="text"  id="f5-title" name="f5-title">
+                        <textarea  id="f5-description" name="f5-description"></textarea>
+                        <input type="date"  id="f5-date" name="f5-date">
+                        <input type="time"  id="f5-time" name="f5-time">
+                        <input type="text"  id="f5-location" name="f5-location">
+                        <input type="text"  id="f5-permissions" name="f5-permissions">
+                    </div>
+
+                    <h3>Files</h3>
+                    <p class="help-block">
+                        You may optionally upload up to five image, video, or audio files to accompany your entry.
+                    </p>
+                    <div id="unadded-files">
+                        <!-- TODO: programatically add these based on MAX_FILES in fileCollection.js -->
+                        <div id="f1-display" class="input-group file-upload-group">
+                            <input type="text" class="form-control" readonly>
+                            <div class="input-group-btn">
+                                <!-- TODO: Reenable when edit file button is fixed (see fileCollection.js) -->
+                                <!-- <button class="btn btn-default edit-file-btn" data-toggle="modal" data-target="#add-file-modal" data-file-id="#f1">
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </button> -->
+                                <button class="delete-file-btn btn btn-default" data-toggle="modal" data-target="#confirm-modal" data-file-id="#f1">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="f2-display" class="input-group file-upload-group">
+                            <input type="text" class="form-control" readonly>
+                            <div class="input-group-btn">
+                                <!-- <button class="btn btn-default edit-file-btn" data-toggle="modal" data-target="#add-file-modal" data-file-id="#f2">
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </button> -->
+                                <button class="delete-file-btn btn btn-default" data-toggle="modal" data-target="#confirm-modal" data-file-id="#f2">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="f3-display" class="input-group file-upload-group">
+                            <input type="text" class="form-control" readonly>
+                            <div class="input-group-btn">
+                                <!-- <button class="btn btn-default edit-file-btn" data-toggle="modal" data-target="#add-file-modal" data-file-id="#f3">
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </button> -->
+                                <button class="delete-file-btn btn btn-default" data-toggle="modal" data-target="#confirm-modal" data-file-id="#f3">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="f4-display" class="input-group file-upload-group">
+                            <input type="text" class="form-control" readonly>
+                            <div class="input-group-btn">
+                                <!-- <button class="btn btn-default edit-file-btn" data-toggle="modal" data-target="#add-file-modal" data-file-id="#f4">
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </button> -->
+                                <button class="delete-file-btn btn btn-default" data-toggle="modal" data-target="#confirm-modal" data-file-id="#f4">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="f5-display" class="input-group file-upload-group">
+                            <input type="text" class="form-control" readonly>
+                            <div class="input-group-btn">
+                                <!-- <button class="btn btn-default edit-file-btn" data-toggle="modal" data-target="#add-file-modal" data-file-id="#f5">
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </button> -->
+                                <button class="delete-file-btn btn btn-default" data-toggle="modal" data-target="#confirm-modal" data-file-id="#f5">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div> <!-- / unadded-files -->
+
+                    <div id="added-files"></div>
+
+                    <button id="new-file-btn" class="btn btn-default" data-toggle="modal" data-target="#add-file-modal">Add File</button>
+                </div> <!-- / Files -->
+
+                <!-- Personal Info -->
+                <div id="personal-info">
+                    <h3>Personal Information</h3>
+                    <p class="help-block">
+                        A valid email address is required. Your name and email are for administration only and will not be made public.
+                    </p>
+                    <div class="row">
+                        <div class="form-group col-xs-6" id="fname">
+                            <label for="fname">Given Name</label>
+                            <input type="text" class="form-control" name="fname"></input>
+                        </div>
+                        <div class="form-group col-xs-6" id="lname">
+                            <label for="lname">Family Name</label>
+                            <input type="text" class="form-control" name="lname"></input>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="email">
+                        <label for="email">Email</label>
+                        <input type="email" name="email" class="form-control"></input>
+                    </div>
+                </div> <!-- / Personal Info -->
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </main>
+
+        <!-- JavaScript -->
+
+        <!-- jQuery -->
+        <script type="text/javascript" src="assets/js/jquery.min.js"></script>
+        <!-- Bootstrap -->
+        <script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+        <!-- Google Maps API with Places Library -->
+        <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA4wQ_KDwHddu93PLyhgIBPFY5rpRyZrIo&libraries=places"></script>
+        <!-- Map -->
+        <script type="text/javascript" src="assets/js/map.js"></script>
+        <!-- File Data Collection Behavior -->
+        <script type="text/javascript" src="assets/js/fileCollection.js"></script>
+        <!-- Form Submission Handler -->
+        <script type="text/javascript" src="assets/js/submit911.js"></script>
+    </body>
+</html>

@@ -1,0 +1,13 @@
+.toggle > button::before {
+    font-family: "Glyphicons Halflings";
+    content: "\e114";
+}
+.toggle.open > button::before {
+    font-family: "Glyphicons Halflings";
+    content: "\e113";
+}
+.toggle > div {
+    display: none;
+    margin-top: 12px;
+    padding: 24px;
+}

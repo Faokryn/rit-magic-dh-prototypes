@@ -1,0 +1,11 @@
+.file-upload-group {
+    margin-top: 12px;
+}
+
+.file-upload-group:first-child {
+    margin-top: 0;
+}
+
+.file-upload-group input[type=file] {
+    display: none;
+}

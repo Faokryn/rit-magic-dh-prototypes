@@ -1,0 +1,98 @@
+html {
+    min-width: 735px;
+}
+
+.container-fluid {
+    padding: 0;
+}
+
+.container-fluid header.jumbotron {
+    margin: 0;
+    border-radius: 0;
+    background: url("../../assets/img/pattern.png"), #43ADB8;
+}
+
+h1 {
+    font-size: 48px;
+    margin-bottom: 32px;
+}
+
+header p {
+    margin-bottom: 64px;
+}
+
+header.jumbotron > hr {
+    border-color: #333333;
+    border-width: 3px;
+    margin: 32px auto;
+    width: 256px;
+}
+
+header ul.nav-pills {
+    display: inline-block;
+}
+
+header ul.nav-pills a {
+    margin: 16px;
+}
+
+header a {
+    background:#228494;
+    color: #EEEEEE;
+}
+
+header a:hover {
+    color: #333333;
+}
+
+section {
+    padding: 75px 15%;
+}
+
+section img {
+    max-width: 100%;
+    border: 1px solid #333333;
+    border-radius: 6px;
+    margin: 0 32px 32px 0;
+}
+
+section img.front-img {
+    max-height: 256px;
+}
+
+section a.btn-default, section button.btn-default, section button.btn-default:focus:not(:hover) {
+    background: #43ADB8;
+    color: #EEEEEE;
+    text-shadow: none;
+    border: 0px;
+}
+
+section p {
+    margin-bottom: 32px;
+    overflow: hidden;
+}
+
+p {
+    text-align: justify;
+}
+
+
+#historypin {
+    /*background: #EC008C  /* historypin pink */
+}
+
+#omeka {
+    background: #EEEEEE;
+}
+
+#tour-builder {
+
+}
+
+#timeline {
+    background: #EEEEEE;
+}
+
+#about {
+    background: url("/assets/img/pattern.png"), #43ADB8;
+}
