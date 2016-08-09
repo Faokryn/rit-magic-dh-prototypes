@@ -189,8 +189,8 @@ $("#new-file-btn").on("click", function () {
     });
 });
 
+// TODO: Implement Edit functionality.  See https://github.com/faokryn/rit-magic-dh-prototypes/issues/4
 // when any Edit File button (pencil) is clicked
-// TODO: make it work
 // $(".edit-file-btn").on("click", function (evt) {
 //     var fileId = $(this).data("file-id");
 //     loadFileInput(fileId);

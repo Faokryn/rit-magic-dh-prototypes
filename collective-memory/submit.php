@@ -22,8 +22,8 @@ try {
     echo "Setting error mode...<br>";
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // TODO: investigate -  Prepared statements might not be necessary for these CREATE TABLE queries, since they don't
-    //                      have variables, but I'm not sure and they can't hurt so I'm using them anyway for now
+    // TODO: investigate prepared statements for queries with no user input.
+    //       See https://github.com/faokryn/rit-magic-dh-prototypes/issues/2
     echo "Forming query to create table \"users\"...<br>";
     $qry_create_users = $conn->prepare("CREATE TABLE IF NOT EXISTS users (
                                             id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -79,7 +79,7 @@ if (!empty($_REQUEST["email"])           &&
     !empty($_REQUEST["q-cell-phone"])
 ) {
 
-    // TODO: sanitize input
+    // TODO: validate/sanitize input. See https://github.com/faokryn/rit-magic-dh-prototypes/issues/1
     $email = $_REQUEST["email"];
 
     try {
@@ -103,7 +103,7 @@ if (!empty($_REQUEST["email"])           &&
         $qry_last_id = $conn->prepare("SELECT LAST_INSERT_ID()");
 
 
-        // TODO: sanitize input
+        // TODO: validate/sanitize input. See https://github.com/faokryn/rit-magic-dh-prototypes/issues/1
         $fname = $_REQUEST["fname"];
         $lname = $_REQUEST["lname"];
 
@@ -117,7 +117,7 @@ if (!empty($_REQUEST["email"])           &&
         $qry_last_id->execute();
         $user = $qry_last_id->fetch()[0];
 
-        // TODO: sanitize input
+        // TODO: validate/sanitize input. See https://github.com/faokryn/rit-magic-dh-prototypes/issues/1
         $q_first_moments = $_REQUEST["q-first-moments"];
         $q_change = $_REQUEST["q-change"];
         $q_impacted = $_REQUEST["q-impacted"];
@@ -141,12 +141,13 @@ if (!empty($_REQUEST["email"])           &&
         $qry_last_id->execute();
         $response = $qry_last_id->fetch()[0];
 
-        // TODO: Check and add files in a loop based on MAX_FILES in fileCollection.js
+        // TODO: check and add files in a loop based on MAX_FILES in fileCollection.js
+        //       See https://github.com/faokryn/rit-magic-dh-prototypes/issues/3
 
         // Add File 1, if applicable
         if ($_REQUEST["f1-file"]) {
 
-            // TODO: sanitize input
+            // TODO: validate/sanitize input. See https://github.com/faokryn/rit-magic-dh-prototypes/issues/1
             $file           = $_REQUEST["f1-file"];
             $title          = $_REQUEST["f1-title"];
             $description    = $_REQUEST["f1-description"];
@@ -170,7 +171,7 @@ if (!empty($_REQUEST["email"])           &&
         // Add File 2, if applicable
         if ($_REQUEST["f2-file"]) {
 
-            // TODO: sanitize input
+            // TODO: validate/sanitize input. See https://github.com/faokryn/rit-magic-dh-prototypes/issues/1
             $file           = $_REQUEST["f2-file"];
             $title          = $_REQUEST["f2-title"];
             $description    = $_REQUEST["f2-description"];
@@ -194,7 +195,7 @@ if (!empty($_REQUEST["email"])           &&
         // Add File 3, if applicable
         if ($_REQUEST["f3-file"]) {
 
-            // TODO: sanitize input
+            // TODO: validate/sanitize input. See https://github.com/faokryn/rit-magic-dh-prototypes/issues/1
             $file           = $_REQUEST["f3-file"];
             $title          = $_REQUEST["f3-title"];
             $description    = $_REQUEST["f3-description"];
@@ -218,7 +219,7 @@ if (!empty($_REQUEST["email"])           &&
         // Add File 4, if applicable
         if ($_REQUEST["f4-file"]) {
 
-            // TODO: sanitize input
+            // TODO: validate/sanitize input. See https://github.com/faokryn/rit-magic-dh-prototypes/issues/1
             $file           = $_REQUEST["f4-file"];
             $title          = $_REQUEST["f4-title"];
             $description    = $_REQUEST["f4-description"];
@@ -242,7 +243,7 @@ if (!empty($_REQUEST["email"])           &&
         // Add File 5, if applicable
         if ($_REQUEST["f5-file"]) {
 
-            // TODO: sanitize input
+            // TODO: validate/sanitize input. See https://github.com/faokryn/rit-magic-dh-prototypes/issues/1
             $file           = $_REQUEST["f5-file"];
             $title          = $_REQUEST["f5-title"];
             $description    = $_REQUEST["f5-description"];
